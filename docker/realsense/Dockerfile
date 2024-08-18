@@ -27,14 +27,14 @@ RUN apt-get update && apt-get install -y locales tzdata && \
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-# Set up jetson user
-RUN useradd -m jetson && echo "jetson:jetson" | chpasswd && adduser jetson sudo
+# Set up realsense user
+RUN useradd -m realsense && echo "realsense:realsense" | chpasswd && adduser realsense sudo
 
 # Configure sudoers to not require a password for sudo
-RUN echo "jetson ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN echo "realsense ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Switch to jetson user
-USER jetson
+# Switch to realsense user
+USER realsense
 
 # Install Dependencies
 RUN sudo apt-get update && sudo apt-get install -y \
@@ -59,10 +59,10 @@ RUN sudo apt-get update && sudo apt-get install -y ros-humble-desktop
 RUN sudo apt install -y ros-humble-realsense2-camera
 
 # Add start up commands to .bashrc
-RUN echo "source /opt/ros/humble/setup.bash" >> /home/jetson/.bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/realsense/.bashrc
 
 # Start in home direcotry
-WORKDIR /home/jetson
+WORKDIR /home/realsense
 
 # Clean up
 RUN sudo rm -rf /var/lib/apt/lists/* && \

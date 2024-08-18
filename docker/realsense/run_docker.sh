@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="mavrospy-bridge"
+IMAGE_NAME="realsense-ros"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="mavrospy-bridge-container"
+CONTAINER_NAME="realsense-ros-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then
@@ -64,4 +64,4 @@ fi
 
 # Run docker container
 echo "Running $IMAGE_NAME:$IMAGE_TAG."
-docker run -it --rm --name $CONTAINER_NAME --device=/dev/serial0 --net=host $IMAGE_NAME:$IMAGE_TAG
+docker run -it --rm --name $CONTAINER_NAME --net=host $IMAGE_NAME:$IMAGE_TAG

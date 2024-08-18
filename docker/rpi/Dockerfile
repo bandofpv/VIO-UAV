@@ -14,16 +14,27 @@ RUN apt-get update && apt-get install -y \
     vim \
     nano
 
-# Set up rpi user
-RUN useradd -m rpi && echo "rpi:rpi" | chpasswd && adduser rpi sudo
-
-# Configure sudoers to not require a password for sudo
-RUN echo "rpi ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
 # Install MAVROS
-RUN sudo apt-get install -y ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msgs && \
+RUN apt-get install -y ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mavros-msgs && \
     wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh && \
-    sudo bash ./install_geographiclib_datasets.sh
+    bash ./install_geographiclib_datasets.sh
+
+# Clean up
+RUN rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
+
+# Set up rpi user
+RUN useradd -m rpi
+
+# Grant rpi permission to /dev/ttyUSB0
+RUN usermod -aG dialout rpi
+
+# Set the working directory for the rpi user
+WORKDIR /home/rpi/catkin_ws/src
+
+# Ensure the rpi user has the necessary permissions
+RUN mkdir -p /home/rpi/catkin_ws/src && \
+    chown -R rpi:rpi /home/rpi/catkin_ws
 
 # Switch to rpi user
 USER rpi
@@ -49,16 +60,11 @@ RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/noetic/setup.bash" >> /home/rpi/.bashrc && \
     echo "source /home/rpi/catkin_ws/devel/setup.bash" >> /home/rpi/.bashrc && \
-    echo "sudo chown rpi /dev/serial0" >> /home/rpi/.bashrc && \
     echo "export ROS_IP=$(hostname -I | awk '{print $1}')" >> /home/rpi/.bashrc && \
     echo "export ROS_MASTER_URI=http://$(hostname -I | awk '{print $1}'):11311" >> /home/rpi/.bashrc
 
 # Start in MAVROSPY direcotry
 WORKDIR /home/rpi/catkin_ws/src/mavrospy
-
-# Clean up
-RUN sudo rm -rf /var/lib/apt/lists/* && \
-    sudo apt-get clean
 
 # Set up entrypoint
 ENTRYPOINT ["/bin/bash"]
