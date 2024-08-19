@@ -1,4 +1,4 @@
-# Use Ubuntu 20.04 as the base image
+# Use ROS Noetic as the base image
 FROM ubuntu:focal
 
 # Set environment variables
@@ -27,14 +27,14 @@ RUN apt-get update && apt-get install -y locales tzdata && \
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-# Set up realsense user
-RUN useradd -m realsense && echo "realsense:realsense" | chpasswd && adduser realsense sudo
+# Set up jetson user
+RUN useradd -m jetson && echo "jetson:jetson" | chpasswd && adduser jetson sudo
 
 # Configure sudoers to not require a password for sudo
-RUN echo "realsense ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN echo "jetson ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Switch to realsense user
-USER realsense
+# Switch to jetson user
+USER jetson
 
 # Install Dependencies
 RUN sudo apt-get update && sudo apt-get install -y \
@@ -45,8 +45,8 @@ RUN sudo apt-get update && sudo apt-get install -y \
 
 # Setup Source
 RUN wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | sudo apt-key add - && \
-    grep -qxF "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" /etc/apt/sources.list || \
-    echo "deb https://isaac.download.nvidia.com/isaac-ros/release-3 $(lsb_release -cs) release-3.0" | sudo tee -a /etc/apt/sources.list && \
+    grep -qxF "deb https://isaac.download.nvidia.com/isaac-ros/ubuntu/main $(lsb_release -cs) main" /etc/apt/sources.list || \
+    echo "deb https://isaac.download.nvidia.com/isaac-ros/ubuntu/main $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list && \
     sudo apt-get update && \
     sudo apt update && sudo apt install curl -y && \
     sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
@@ -59,10 +59,10 @@ RUN sudo apt-get update && sudo apt-get install -y ros-humble-desktop
 RUN sudo apt install -y ros-humble-realsense2-camera
 
 # Add start up commands to .bashrc
-RUN echo "source /opt/ros/humble/setup.bash" >> /home/realsense/.bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/jetson/.bashrc
 
 # Start in home direcotry
-WORKDIR /home/realsense
+WORKDIR /home/jetson
 
 # Clean up
 RUN sudo rm -rf /var/lib/apt/lists/* && \

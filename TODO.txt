@@ -1,6 +1,2 @@
-Work on ros1_bridge Dockerfile
-- test ros1_bridge package install on Ubuntu focal base image
-- test mavrospy package install
-
 Work on jetson Dockerfile
 - inetegrate ros1_bridge and mavrospy
