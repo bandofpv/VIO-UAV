@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="issac-apt-test"
+IMAGE_NAME="mavrospy-bridge"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="issac-apt-test-container"
+CONTAINER_NAME="mavrospy-bridge-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then

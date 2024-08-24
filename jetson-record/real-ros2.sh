@@ -1,12 +1,12 @@
-ros2 run realsense2_camera realsense2_camera_node --ros-args \
-  -p enable_infra1:=true \
-  -p enable_infra2:=true \
-  -p enable_color:=false \
-  -p enable_depth:=false \
-  -p depth_module.emitter_enabled:=0 \
-  -p depth_module.profile:=640x360x90 \
-  -p enable_gyro:=true \
-  -p enable_accel:=true \
-  -p gyro_fps:=200 \
-  -p accel_fps:=200 \
-  -p unite_imu_method:=2
+ros2 launch realsense2_camera rs_launch.py \
+  enable_infra1:=true \
+  enable_infra2:=true \
+  enable_color:=false \
+  enable_depth:=false \
+  depth_module.emitter_enabled:=0 \
+  depth_module.profile:=640x360x90 \
+  enable_gyro:=true \
+  enable_accel:=true \
+  gyro_fps:=200 \
+  accel_fps:=200 \
+  unite_imu_method:=2
