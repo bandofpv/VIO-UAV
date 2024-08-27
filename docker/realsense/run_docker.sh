@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="jetson-realsense"
+IMAGE_NAME="realsense"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="jetson-realsense-container"
+CONTAINER_NAME="realsense-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then

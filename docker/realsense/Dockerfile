@@ -62,11 +62,11 @@ RUN sudo apt install -y ros-humble-realsense2-camera
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/jetson/.bashrc && \
     echo "export ROS_DOMAIN_ID=1" >> /home/jetson/.bashrc
 
-# Start in home direcotry
-WORKDIR /home/jetson
-
 # Clone VIO-UAV repo
 RUN git clone https://github.com/bandofpv/VIO-UAV.git
+
+# Start in VIO-UAV directory
+WORKDIR /home/jetson/VIO-UAV
 
 # Clean up
 RUN sudo rm -rf /var/lib/apt/lists/* && \
