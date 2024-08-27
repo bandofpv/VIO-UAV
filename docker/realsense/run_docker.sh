@@ -64,4 +64,4 @@ fi
 
 # Run docker container
 echo "Running $IMAGE_NAME:$IMAGE_TAG."
-docker run -it --rm --name $CONTAINER_NAME --privileged -v /dev:/dev -net=host $IMAGE_NAME:$IMAGE_TAG
+docker run -it --rm --name $CONTAINER_NAME --privileged -v /dev:/dev --net=host $IMAGE_NAME:$IMAGE_TAG

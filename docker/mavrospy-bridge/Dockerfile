@@ -14,12 +14,6 @@ RUN apt-get update && apt-get install -y \
     vim \
     nano
 
-# Pre-configure the keyboard layout options to avoid interactive prompts
-#RUN apt-get update && \
-#    apt-get install -y debconf-utils && \
-#    echo 'keyboard-configuration keyboard-configuration/layoutcode select us' | debconf-set-selections && \
-#    echo 'keyboard-configuration keyboard-configuration/model select Generic 105-key PC (intl.)' | debconf-set-selections
-
 # Setup locale
 RUN apt-get update && apt-get install -y locales tzdata && \
     locale-gen en_US en_US.UTF-8 && \
@@ -101,7 +95,8 @@ RUN git clone https://github.com/ros2/ros1_bridge src/ && \
 
 # Add start up commands to .bashrc
 RUN echo "export ROS_IP=$(hostname -I | awk '{print $1}')" >> /home/bridge/.bashrc && \
-    echo "export ROS_MASTER_URI=http://$(hostname -I | awk '{print $1}'):11311" >> /home/bridge/.bashrc
+    echo "export ROS_MASTER_URI=http://$(hostname -I | awk '{print $1}'):11311" >> /home/bridge/.bashrc && \
+    echo "export ROS_DOMAIN_ID=1" >> /home/bridge/.bashrc
 
 # Start in MAVROSPY directory
 WORKDIR /home/bridge/catkin_ws/src/mavrospy

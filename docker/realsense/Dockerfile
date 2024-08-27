@@ -59,7 +59,8 @@ RUN sudo apt-get update && sudo apt-get install -y ros-humble-desktop
 RUN sudo apt install -y ros-humble-realsense2-camera
 
 # Add start up commands to .bashrc
-RUN echo "source /opt/ros/humble/setup.bash" >> /home/jetson/.bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/jetson/.bashrc && \
+    echo "export ROS_DOMAIN_ID=1" >> /home/jetson/.bashrc
 
 # Start in home direcotry
 WORKDIR /home/jetson
