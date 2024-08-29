@@ -96,10 +96,15 @@ RUN git clone https://github.com/ros2/ros1_bridge src/ && \
 # Add start up commands to .bashrc
 RUN echo "export ROS_IP=$(hostname -I | awk '{print $1}')" >> /home/bridge/.bashrc && \
     echo "export ROS_MASTER_URI=http://$(hostname -I | awk '{print $1}'):11311" >> /home/bridge/.bashrc && \
-    echo "export ROS_DOMAIN_ID=1" >> /home/bridge/.bashrc
+    echo "export ROS_DOMAIN_ID=1" >> /home/bridge/.bashrc && \
+    echo "export FCU_URL=/dev/ttyUSB0:921600" >> /home/bridge/.bashrc
 
-# Start in MAVROSPY directory
-WORKDIR /home/bridge/catkin_ws/src/mavrospy
+# Clone VIO-UAV directory
+WORKDIR /home/bridge
+RUN git clone https://github.com/bandofpv/VIO-UAV.git
+
+# Start in VIO-UAV directory
+WORKDIR /home/bridge/VIO-UAV
 
 # Set up entrypoint
 ENTRYPOINT ["/bin/bash"]

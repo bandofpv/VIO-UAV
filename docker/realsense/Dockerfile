@@ -48,7 +48,7 @@ RUN wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | sudo apt-
     grep -qxF "deb https://isaac.download.nvidia.com/isaac-ros/ubuntu/main $(lsb_release -cs) main" /etc/apt/sources.list || \
     echo "deb https://isaac.download.nvidia.com/isaac-ros/ubuntu/main $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list && \
     sudo apt-get update && \
-    sudo apt update && sudo apt install curl -y && \
+    sudo apt-get update && sudo apt-get install curl -y && \
     sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
 
@@ -56,13 +56,14 @@ RUN wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | sudo apt-
 RUN sudo apt-get update && sudo apt-get install -y ros-humble-desktop
 
 # Install ROS2 RealSense Package
-RUN sudo apt install -y ros-humble-realsense2-camera
+RUN sudo apt-get install -y ros-humble-realsense2-camera
 
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/jetson/.bashrc && \
     echo "export ROS_DOMAIN_ID=1" >> /home/jetson/.bashrc
 
 # Clone VIO-UAV repo
+WORKDIR /home/jetson
 RUN git clone https://github.com/bandofpv/VIO-UAV.git
 
 # Start in VIO-UAV directory
