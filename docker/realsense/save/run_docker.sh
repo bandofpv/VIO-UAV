@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="rviz2"
+IMAGE_NAME="realsense"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="rviz2-container"
+CONTAINER_NAME="realsense-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then
@@ -64,4 +64,4 @@ fi
 
 # Run docker container
 echo "Running $IMAGE_NAME:$IMAGE_TAG."
-docker run -it --rm --net=host --name $CONTAINER_NAME --runtime=nvidia --gpus all -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $IMAGE_NAME:$IMAGE_TAG
+docker run -it --rm --name $CONTAINER_NAME --privileged -v /dev:/dev --net=host $IMAGE_NAME:$IMAGE_TAG
