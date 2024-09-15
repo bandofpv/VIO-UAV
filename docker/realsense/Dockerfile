@@ -62,7 +62,8 @@ RUN chmod +x /opt/realsense/install-realsense-dependencies.sh && \
 # Copy hotplug script for udev rules/hotplug for RealSense
 RUN mkdir -p /opt/realsense/
 COPY scripts/hotplug-realsense.sh /opt/realsense/hotplug-realsense.sh
-COPY udev_rules/99-realsense-libusb-custom.rules /etc/udev/rules.d/99-realsense-libusb-custom.rules
+COPY udev_rules/99-realsense-libusb-custom.rules /etc/udev/rules.d/99-realsense-libusb.rules
+# name check ^^^
 
 # Install colcon and dependencies
 RUN apt-get install python3-colcon-common-extensions ros-humble-diagnostic-updater -y
