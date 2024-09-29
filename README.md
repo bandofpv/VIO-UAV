@@ -5,7 +5,7 @@ Visual Inertial Odometry Integration for UAVs
 
 In order to best take advantage of VSLAM, we must incorporate IMU data into the VIO pipeline. We can use the built in IMU of the Intel D435i camera. This requires the calibration of the IMU and the estimation of its parameters. The calibration of the IMU is done by estimating the bias, scale factor, and misalignment of the accelerometer and gyroscope.
 
-To calibrate the IMU, we can use the IMU Calibration tool that comes with [Librealsense](https://github.com/IntelRealSense/librealsense). First, we need to build the realsense docker image:
+To calibrate the IMU, we can use the IMU Calibration tool that comes with [Librealsense](https://github.com/IntelRealSense/librealsense). First, we need to build the `realsense` docker image:
 
 ```bash
 $ cd VIO-UAV/docker/realsense
@@ -50,14 +50,14 @@ Follow any instructions that are printed out. Then, restart the container and tr
 
 With the internal IMU calibrated, we need to estimate the parameters of the IMU. The parameters of the IMU are the accelerometer and gyroscope noise and bias instability. We can estimate these parameters by collecting data from the IMU and using [Allan Variance](https://en.wikipedia.org/wiki/Allan_variance) to estimate the parameters.
 
-First, we need to record data from the IMU for an extended period of time (at least 3 hours). In the realsense container, open up the realsense ros nodes:
+First, we need to record data from the IMU for an extended period of time (at least 3 hours). In the `realsense` container, open up the realsense ros nodes:
 
 ```bash
 $ cd ~/VIU-UAV/bash
 $ bash real-ros2.sh
 ```
 
-This will open up the realsense ros nodes. Next, open up a new terminal and attach to the realsense container:
+This will open up the realsense ros nodes. Next, open up a new terminal and attach to the `realsense` container:
 
 ```bash
 $ cd ~/VIO-UAV/docker/realsense
@@ -67,6 +67,7 @@ $ bash run_docker.sh
 In the attached container, run the following command to record IMU data:
 
 ```bash
+$ cd ~
 $ ros2 bag record -o imu_rosbag /camera/imu
 ```
 
@@ -74,9 +75,26 @@ After at least 3 hours, stop the recording with **CTRL+C**.
 
 Go to the terminal running the real-ros2.sh script and stop the realsense ros nodes with **CTRL+C**.
 
-With our IMU data, we can now proceed to estimate the IMU parameters. This can be done easily within the ROS2 framework via [allan_ros2](https://github.com/CruxDevStuff/allan_ros2/tree/main). 
+With our IMU data, we can now proceed to estimate the IMU parameters. This can be done easily within the ROS2 framework via [allan_ros2](https://github.com/CruxDevStuff/allan_ros2/tree/main).
 
-In the realsense container, edit the allan_ros2 config file:
+First, we need to copy the IMU data to our desktop computer. Open a new terminal on your desktop computer and run the following command:
+
+```bash
+$ scp <username>@<jetson_ip>:/home/jetson/imu_rosbag/imu_rosbag.db3 ~/VIO-UAV/docker/analysis/imu_rosbag.db3
+```
+
+Where `<username>` is your username on the jetson and `<jetson_ip>` is the IP address.
+
+## Check to see if the COPY works
+
+Next, we need to build the `analysis` docker image on our desktop computer:
+
+```bash
+$ cd VIO-UAV/docker/analysis
+$ bash run_docker.sh
+```
+
+This will build the image and run it in a container. Once the container is running, edit the allan_ros2 config file:
 
 ```bash
 $ nano ~/allan_ws/src/allan_ros2/config/config.yaml
@@ -90,7 +108,7 @@ Modify the file to look like the following:
 allan_node:
   ros__parameters:
      topic: /camera/imu
-     bag_path: /home/rviz2/imu_rosbag/imu_rosbag.db3
+     bag_path: /home/analysis/imu_rosbag/imu_rosbag.db3
      msg_type: ros
      publish_rate: 200
      sample_rate: 200

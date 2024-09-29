@@ -61,7 +61,7 @@ RUN sudo apt-get install -y ros-humble-realsense2-camera
 # Install RViz2
 RUN sudo apt-get install -y ros-humble-rviz2
 
-# Work in home direcotry
+# Work in home directory
 WORKDIR /home/analysis
 
 # Clone VIO-UAV repo
@@ -86,9 +86,15 @@ RUN sudo rosdep init && \
     /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src -y --ignore-src" && \
     /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
 
+# Copy IMU rosbag data
+COPY ./imu_rosbag /home/analysis/imu_rosbag
+
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
     echo "export ROS_DOMAIN_ID=1" >> /home/analysis/.bashrc
+
+# Start in VIO-UAV directory
+WORKDIR /home/analysis/VIO-UAV
 
 # Clean up
 RUN sudo rm -rf /var/lib/apt/lists/* && \
