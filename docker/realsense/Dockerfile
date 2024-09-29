@@ -60,27 +60,11 @@ RUN sudo apt-get install -y ros-humble-realsense2-camera
 
 # Install Dependencies for IMU Calibration Tool
 RUN sudo apt-get update && sudo apt-get install -y python3-pip && \
-    sudo pip3 install numpy && \
-    sudo pip3 install pyrealsense2
+    sudo pip3 install numpy scipy pyrealsense2
 
 # Install IMU Calibration Tool
 WORKDIR /home/jetson
 RUN git clone https://github.com/IntelRealSense/librealsense.git
-
-# Install Dependencies for allan_ros2 package
-RUN sudo apt-get update && sudo apt-get install -y \
-    python3-rosdep \
-    python3-colcon-common-extensions
-
-# Install allan_ros2
-WORKDIR /home/jetson/allan_ws/src
-RUN git clone https://github.com/PX4/px4_msgs.git && \
-    git clone https://github.com/CruxDevStuff/allan_ros2.git
-WORKDIR /home/jetson/allan_ws
-RUN sudo rosdep init && \
-    rosdep update && \
-    /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src -y --ignore-src --rosdistro humble --os ubuntu:focal" && \
-    /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
 
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/jetson/.bashrc && \

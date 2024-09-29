@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="rviz2"
+IMAGE_NAME="analysis"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="rviz2-container"
+CONTAINER_NAME="analysis-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then

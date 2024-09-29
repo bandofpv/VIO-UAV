@@ -27,16 +27,16 @@ RUN apt-get update && apt-get install -y locales tzdata && \
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-# Set up rviz2 user
-RUN useradd -m rviz2 && echo "rviz2:rviz2" | chpasswd && adduser rviz2 sudo
+# Set up analysis user
+RUN useradd -m analysis && echo "analysis:analysis" | chpasswd && adduser analysis sudo
 
 # Configure sudoers to not require a password for sudo
-RUN echo "rviz2 ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN echo "analysis ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Switch to rviz2 user
-USER rviz2
+# Switch to analysis user
+USER analysis
 
-# Install Dependencies
+# Install Dependencies for ROS2 Humble
 RUN sudo apt-get update && sudo apt-get install -y \
     gnupg \
     wget \
@@ -61,15 +61,34 @@ RUN sudo apt-get install -y ros-humble-realsense2-camera
 # Install RViz2
 RUN sudo apt-get install -y ros-humble-rviz2
 
-# Add start up commands to .bashrc
-RUN echo "source /opt/ros/humble/setup.bash" >> /home/rviz2/.bashrc && \
-    echo "export ROS_DOMAIN_ID=1" >> /home/rviz2/.bashrc
-
-# Start in home direcotry
-WORKDIR /home/rviz2
+# Work in home direcotry
+WORKDIR /home/analysis
 
 # Clone VIO-UAV repo
 RUN git clone https://github.com/bandofpv/VIO-UAV.git
+
+# Install Dependencies for allan_ros2 package
+RUN sudo apt-get update && sudo apt-get install -y \
+    python3-scipy \
+    python3-rosdep \
+    python3-colcon-common-extensions
+
+# Install allan_ros2
+#RUN mkdir -p /home/analysis/allan_ws/src
+WORKDIR /home/analysis/allan_ws/src
+RUN git clone https://github.com/PX4/px4_msgs.git && \
+    git clone https://github.com/CruxDevStuff/allan_ros2.git
+WORKDIR /home/analysis/allan_ws/src/px4_msgs
+RUN git reset --hard 87741f4
+WORKDIR /home/analysis/allan_ws
+RUN sudo rosdep init && \
+    rosdep update && \
+    /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src -y --ignore-src" && \
+    /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
+
+# Add start up commands to .bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
+    echo "export ROS_DOMAIN_ID=1" >> /home/analysis/.bashrc
 
 # Clean up
 RUN sudo rm -rf /var/lib/apt/lists/* && \
