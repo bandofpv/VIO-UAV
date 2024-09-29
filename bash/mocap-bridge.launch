@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Run the Pose to Path node -->
+  <node name="pose_to_path" pkg="mavrospy" type="pose_to_path.py" output="screen">
+    <param name="topic" value="/qualisys/My_Quad/pose"/>
+  </node>
+</launch>
+
