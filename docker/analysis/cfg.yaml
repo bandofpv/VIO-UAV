@@ -1,0 +1,13 @@
+/motion_capture_tracking:
+  ros__parameters:
+    type: "qualisys"
+
+    # Specify the hostname or IP of the computer running the motion capture software
+    hostname: "192.168.8.243"
+
+    # Specify additional settings for the /poses topic here
+    topics:
+      poses:
+        qos:
+          mode: "none" # one of "none" or "sensor"
+          deadline: 100.0 # Hz

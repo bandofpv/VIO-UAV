@@ -1,4 +1,4 @@
-# Use ROS Noetic as the base image
+# Use Ubuntu Focal as the base image
 FROM ubuntu:focal
 
 # Set environment variables
@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     git \
     sudo \
     net-tools \
+    python3-pip \
     vim \
     nano
 
@@ -27,14 +28,8 @@ RUN apt-get update && apt-get install -y locales tzdata && \
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-# Set up analysis user
-RUN useradd -m analysis && echo "analysis:analysis" | chpasswd && adduser analysis sudo
-
-# Configure sudoers to not require a password for sudo
-RUN echo "analysis ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-
-# Switch to analysis user
-USER analysis
+# Set up mocap user
+RUN useradd -m mocap
 
 # Install Dependencies for ROS2 Humble
 RUN sudo apt-get update && sudo apt-get install -y \
@@ -55,58 +50,42 @@ RUN wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | sudo apt-
 # Install core ROS2 Packages
 RUN sudo apt-get update && sudo apt-get install -y ros-humble-desktop
 
-# Install ROS2 RealSense Package
-RUN sudo apt-get install -y ros-humble-realsense2-camera
-
-# Install RViz2
-RUN sudo apt-get install -y ros-humble-rviz2
-
-# Work in home directory
-WORKDIR /home/analysis
-
-# Clone VIO-UAV repo
-RUN git clone https://github.com/bandofpv/VIO-UAV.git
-
-# Install Dependencies for allan_ros2 package
-RUN sudo apt-get update && sudo apt-get install -y \
-    python3-scipy \
-    python3-rosdep \
+# Install Dependencies for Mocap4ROS2
+RUN apt-get install -y python3-vcstool \
     python3-colcon-common-extensions
 
-# Install allan_ros2 and motion_capture_tracking packages
-#RUN mkdir -p /home/analysis/ros2_ws/src
-WORKDIR /home/analysis/ros2_ws/src
-RUN git clone https://github.com/PX4/px4_msgs.git && \
-    git clone https://github.com/CruxDevStuff/allan_ros2.git && \
-    git clone --recurse-submodules https://github.com/IMRCLab/motion_capture_tracking.git
-#WORKDIR /home/analysis/ros2_ws/src/px4_msgs
-#RUN git reset --hard 87741f4
-WORKDIR /home/analysis/ros2_ws
-RUN sudo rosdep init && \
-    rosdep update && \
-    /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src -y --ignore-src" && \
-    /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
+# Clean up
+RUN rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
-# Copy IMU rosbag data
-#COPY ./imu_rosbag /home/analysis/imu_rosbag
+# Switch to mocap user
+USER mocap
 
-# Copy cfg.yaml file
-COPY ./cfg.yaml /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml
+# Set the working directory for the mocap user
+WORKDIR /home/mocap/catkin_ws/src
 
-# Copy custom msg files
-RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking /home/analysis/VIU-UAV/analysis
+# Clone mocap4ros2 repository
+RUN git clone --recursive https://github.com/MOCAP4ROS2-Project/mocap4ros2_qualisys.git
+
+# Install dependencies
+RUN vcs import < mocap4ros2_qualisys/dependency_repos.repos
+
+# Build mocap4ros2
+WORKDIR /home/mocap/catkin_ws
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
 
 # Add start up commands to .bashrc
-RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
-    echo "source /home/analysis/ros2_ws/install/setup.bash" >> /home/analysis/.bashrc && \
-    echo "export ROS_DOMAIN_ID=1" >> /home/analysis/.bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/mocap/.bashrc && \
+    echo "source /home/mocap/catkin_ws/install/setup.bash" >> /home/mocap/.bashrc && \
+    echo "export ROS_IP=$(hostname -I | awk '{print $1}')" >> /home/mocap/.bashrc && \
+    echo "export ROS_DOMAIN_ID=1" >> /home/mocap/.bashrc
+
+# Clone VIO-UAV directory
+WORKDIR /home/mocap
+RUN git clone https://github.com/bandofpv/VIO-UAV.git
 
 # Start in VIO-UAV directory
-WORKDIR /home/analysis/VIO-UAV
-
-# Clean up
-RUN sudo rm -rf /var/lib/apt/lists/* && \
-    sudo apt-get clean
+WORKDIR /home/mocap/VIO-UAV
 
 # Set up entrypoint
 ENTRYPOINT ["/bin/bash"]

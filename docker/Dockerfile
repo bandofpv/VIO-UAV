@@ -50,10 +50,10 @@ RUN apt-get install -y ros-noetic-mavros ros-noetic-mavros-extras ros-noetic-mav
 RUN pip3 install pymavlink
 
 # Set up bridge user
-RUN useradd -m bridge
+RUN useradd -m bridge && echo "bridge:bridge" | chpasswd && adduser bridge sudo
 
-# Grant bridge permission to /dev/ttyUSB0
-RUN usermod -aG dialout bridge
+# Configure sudoers to not require a password for sudo
+RUN echo "bridge ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Set the working directory for the bridge user
 WORKDIR /home/bridge/catkin_ws/src
@@ -62,10 +62,6 @@ WORKDIR /home/bridge/catkin_ws/src
 RUN mkdir -p /home/bridge/catkin_ws/src && \
     chown -R bridge:bridge /home/bridge/catkin_ws
 
-# Clean up
-RUN rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
-
 # Switch to bridge user
 USER bridge
 
@@ -73,8 +69,8 @@ USER bridge
 WORKDIR /home/bridge/catkin_ws/src
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_init_workspace"
 
-# Clone MAVROSPY repo
-RUN git clone https://github.com/bandofpv/mavrospy.git
+# Clone QTM ROS package
+RUN git clone https://github.com/KTH-SML/motion_capture_system.git
 
 # Install ROS1 package dependencies
 WORKDIR /home/bridge/catkin_ws
@@ -95,13 +91,15 @@ RUN git clone https://github.com/ros2/ros1_bridge src/ && \
 
 # Add start up commands to .bashrc
 RUN echo "export ROS_IP=$(hostname -I | awk '{print $1}')" >> /home/bridge/.bashrc && \
-    echo "export ROS_MASTER_URI=http://$(hostname -I | awk '{print $1}'):11311" >> /home/bridge/.bashrc && \
-    echo "export ROS_DOMAIN_ID=1" >> /home/bridge/.bashrc && \
-    echo "export FCU_URL=/dev/ttyUSB0:921600" >> /home/bridge/.bashrc
+    echo "export ROS_DOMAIN_ID=1" >> /home/bridge/.bashrc
 
 # Clone VIO-UAV directory
 WORKDIR /home/bridge
 RUN git clone https://github.com/bandofpv/VIO-UAV.git
+
+# Clean up
+RUN sudo rm -rf /var/lib/apt/lists/* && \
+    sudo apt-get clean
 
 # Start in VIO-UAV directory
 WORKDIR /home/bridge/VIO-UAV

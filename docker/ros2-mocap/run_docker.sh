@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="mocap-bridge"
+IMAGE_NAME="ros2-mocap"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="mocap-bridge-container"
+CONTAINER_NAME="ros2-mocap-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then
