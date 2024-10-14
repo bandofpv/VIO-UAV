@@ -24,6 +24,12 @@ WORKDIR /workspaces/isaac_ros-dev
 # Build the ROS workspace
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
 
+# Set working directory
+WORKDIR /home/admin
+
+# Clone the VIO-UAV repository
+RUN git clone https://github.com/bandofpv/VIO-UAV.git
+
 # Add start up commands to .bashrc
 RUN echo "export ROS_DOMAIN_ID=1" >> /home/admin/.bashrc && \
     echo "source /opt/ros/humble/setup.bash" >> /home/admin/.bashrc && \

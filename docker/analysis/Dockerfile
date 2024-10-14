@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     git \
     sudo \
+    python3-pip \
     net-tools \
     vim \
     nano
@@ -94,7 +95,10 @@ RUN sudo rosdep init && \
 COPY ./cfg.yaml /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml
 
 # Copy custom msg files
-RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking /home/analysis/VIU-UAV/analysis
+RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces /home/analysis/VIO-UAV/analysis
+
+# Install rosbags, pandas, and matplotlib
+RUN pip3 install rosbags pandas matplotlib
 
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
