@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     git \
     sudo \
+    python3 \
     python3-pip \
     net-tools \
     vim \
@@ -80,6 +81,10 @@ WORKDIR /home/analysis/ros2_ws/src
 RUN git clone https://github.com/PX4/px4_msgs.git && \
     git clone https://github.com/CruxDevStuff/allan_ros2.git && \
     git clone --recurse-submodules https://github.com/IMRCLab/motion_capture_tracking.git
+
+# Copy cfg.yaml file
+COPY ./cfg.yaml /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml
+
 #WORKDIR /home/analysis/ros2_ws/src/px4_msgs
 #RUN git reset --hard 87741f4
 WORKDIR /home/analysis/ros2_ws
@@ -91,14 +96,11 @@ RUN sudo rosdep init && \
 # Copy IMU rosbag data
 #COPY ./imu_rosbag /home/analysis/imu_rosbag
 
-# Copy cfg.yaml file
-COPY ./cfg.yaml /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml
-
 # Copy custom msg files
 RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces /home/analysis/VIO-UAV/analysis
 
-# Install rosbags, pandas, and matplotlib
-RUN pip3 install rosbags pandas matplotlib
+# Install pandas and rosbags
+RUN pip3 install pandas rosbags
 
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \

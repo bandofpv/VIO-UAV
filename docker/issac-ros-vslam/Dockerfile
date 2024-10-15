@@ -30,6 +30,9 @@ WORKDIR /home/admin
 # Clone the VIO-UAV repository
 RUN git clone https://github.com/bandofpv/VIO-UAV.git
 
+# Start in VIO-UAV directory
+WORKDIR /home/admin/VIO-UAV
+
 # Add start up commands to .bashrc
 RUN echo "export ROS_DOMAIN_ID=1" >> /home/admin/.bashrc && \
     echo "source /opt/ros/humble/setup.bash" >> /home/admin/.bashrc && \
