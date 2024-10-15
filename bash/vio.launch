@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Movement type argument -->
+  <arg name="pattern" default="square" />
+
+  <!-- Set the default fcu_url to /dev/ttyUSB0:921600 -->
+  <arg name="fcu_url" default="/dev/ttyUSB0:921600" />
+
+  <!-- Include the MAVROS px4 node -->
+  <include file="$(find mavros)/launch/px4.launch">
+    <arg name="fcu_url" value="$(arg fcu_url)" />
+  </include>
+
+  <!-- Relay VIO pose topic to MAVROS vision_pose topic -->
+  <node pkg="topic_tools" type="relay" name="relay" output="screen" args="/visual_slam/tracking/vo_pose_covariance /mavros/vision_pose/pose_cov"/>
+
+  <!-- Launch MAVROSPY control node and Fake GPS node -->
+  <node pkg="mavrospy" type="fake_gps.py" name="fake_gps" required="true" output="screen"/>
+  <node pkg="mavrospy" type="$(arg pattern).py" name="control_node" required="true" output="screen">
+    <param name="vision" value="true"/>
+  </node>
+
+</launch>
