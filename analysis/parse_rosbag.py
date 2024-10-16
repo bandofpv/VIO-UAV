@@ -26,9 +26,10 @@ gt_position_x = []; gt_position_y = []; gt_position_z = []
 gt_orientation_x = []; gt_orientation_y = []; gt_orientation_z = []; gt_orientation_w = []
 
 gt = []
+vio =[]
 
 # Create reader instance and open for reading.
-with Reader('/home/analysis/rosbag-circle') as reader:
+with Reader('/home/analysis/VIO-UAV/analysis/data/circle') as reader:
     # Topic and msgtype information is available on .connections list.
     for connection in reader.connections:
         print(connection.topic, connection.msgtype)
@@ -50,5 +51,26 @@ with Reader('/home/analysis/rosbag-circle') as reader:
                 'gt_orientation_w': msg.poses[0].pose.orientation.w
                 })
 
-df = pd.DataFrame(gt)
-print(df.head())
+        if connection.topic == '/visual_slam/tracking/vo_pose_covariance':
+            msg = typestore.deserialize_cdr(rawdata, connection.msgtype)
+            
+            vio.append({
+                'vio_secs': msg.header.stamp.sec,
+                'vio_nsecs': msg.header.stamp.nanosec,
+                'vio_position_x': msg.pose.pose.position.x, 
+                'vio_position_y': msg.pose.pose.position.y,
+                'vio_position_z': msg.pose.pose.position.z,
+                'vio_orientation_x': msg.pose.pose.orientation.x,
+                'vio_orientation_y': msg.pose.pose.orientation.y,
+                'vio_orientation_z': msg.pose.pose.orientation.z,
+                'vio_orientation_w': msg.pose.pose.orientation.w
+                })
+
+gt_df = pd.DataFrame(gt)
+#print(gt_df.head())
+
+vio_df = pd.DataFrame(vio)
+#print(vio_df.head(10))
+
+gt_df.to_csv('gt.csv', index=False)
+vio_df.to_csv('vio.csv', index=False)
