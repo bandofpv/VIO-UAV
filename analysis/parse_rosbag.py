@@ -1,8 +1,14 @@
+import argparse
 import pandas as pd
 from pathlib import Path
 from rosbags.rosbag2 import Reader
 from rosbags.typesys import Stores, get_types_from_msg, get_typestore
 
+
+# Parse Name Argument
+parser = argparse.ArgumentParser()
+parser.add_argument("--name", help="name of rosbag")
+args = parser.parse_args()
 
 # Plain dictionary to hold message definitions
 add_types = {}
@@ -29,7 +35,7 @@ gt = []
 vio =[]
 
 # Create reader instance and open for reading.
-with Reader('/home/analysis/VIO-UAV/analysis/data/circle') as reader:
+with Reader('/home/analysis/VIO-UAV/analysis/data/' + str(args.name)) as reader:
     # Topic and msgtype information is available on .connections list.
     for connection in reader.connections:
         print(connection.topic, connection.msgtype)
@@ -53,7 +59,7 @@ with Reader('/home/analysis/VIO-UAV/analysis/data/circle') as reader:
 
         if connection.topic == '/visual_slam/tracking/vo_pose_covariance':
             msg = typestore.deserialize_cdr(rawdata, connection.msgtype)
-            
+
             vio.append({
                 'vio_secs': msg.header.stamp.sec,
                 'vio_nsecs': msg.header.stamp.nanosec,
@@ -72,5 +78,5 @@ gt_df = pd.DataFrame(gt)
 vio_df = pd.DataFrame(vio)
 #print(vio_df.head(10))
 
-gt_df.to_csv('gt.csv', index=False)
-vio_df.to_csv('vio.csv', index=False)
+gt_df.to_csv('/home/analysis/VIO-UAV/analysis/data/' + str(args.name) + '/gt.csv', index=False)
+vio_df.to_csv('/home/analysis/VIO-UAV/analysis/data/' + str(args.name) + '/vio.csv', index=False)
