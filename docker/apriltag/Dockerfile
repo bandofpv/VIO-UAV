@@ -28,8 +28,8 @@ RUN apt-get update && apt-get install -y locales tzdata && \
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
-# Set up mocap user
-RUN useradd -m mocap
+# Set up apriltag user
+RUN useradd -m apriltag
 
 # Install Dependencies for ROS2 Humble
 RUN sudo apt-get update && sudo apt-get install -y \
@@ -50,42 +50,40 @@ RUN wget -qO - https://isaac.download.nvidia.com/isaac-ros/repos.key | sudo apt-
 # Install core ROS2 Packages
 RUN sudo apt-get update && sudo apt-get install -y ros-humble-desktop
 
-# Install Dependencies for Mocap4ROS2
-RUN apt-get install -y python3-vcstool \
-    python3-colcon-common-extensions
+# Install colcon
+RUN apt-get install -y python3-colcon-common-extensions
 
 # Clean up
 RUN rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
-# Switch to mocap user
-USER mocap
+# Switch to apriltag user
+USER apriltag
 
-# Set the working directory for the mocap user
-WORKDIR /home/mocap/ros2_ws/src
+# Set the working directory for the apriltag user
+WORKDIR /home/apriltag/catkin_ws/src
 
-# Clone mocap4ros2 repository
-RUN git clone --recursive https://github.com/MOCAP4ROS2-Project/mocap4ros2_qualisys.git
+# Clone apriltag and apriltag_ros repository
+RUN git clone https://github.com/AprilRobotics/apriltag.git && \
+    git clone https://github.com/christianrauch/apriltag_msgs.git && \
+    git clone https://github.com/christianrauch/apriltag_ros.git
 
-# Install dependencies
-RUN vcs import < mocap4ros2_qualisys/dependency_repos.repos
-
-# Build mocap4ros2
-WORKDIR /home/mocap/ros2_ws
+# Build apriltag_ros
+WORKDIR /home/apriltag/catkin_ws
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
 
 # Add start up commands to .bashrc
-RUN echo "source /opt/ros/humble/setup.bash" >> /home/mocap/.bashrc && \
-    echo "source /home/mocap/ros2_ws/install/setup.bash" >> /home/mocap/.bashrc && \
-    echo "export ROS_IP=$(hostname -I | awk '{print $1}')" >> /home/mocap/.bashrc && \
-    echo "export ROS_DOMAIN_ID=1" >> /home/mocap/.bashrc
+RUN echo "source /opt/ros/humble/setup.bash" >> /home/apriltag/.bashrc && \
+    echo "source /home/apriltag/catkin_ws/install/setup.bash" >> /home/apriltag/.bashrc && \
+    echo "export ROS_IP=$(hostname -I | awk '{print $1}')" >> /home/apriltag/.bashrc && \
+    echo "export ROS_DOMAIN_ID=1" >> /home/apriltag/.bashrc
 
 # Clone VIO-UAV directory
-WORKDIR /home/mocap
+WORKDIR /home/apriltag
 RUN git clone https://github.com/bandofpv/VIO-UAV.git
 
 # Start in VIO-UAV directory
-WORKDIR /home/mocap/VIO-UAV
+WORKDIR /home/apriltag/VIO-UAV
 
 # Set up entrypoint
 ENTRYPOINT ["/bin/bash"]
