@@ -13,7 +13,7 @@ def generate_launch_description():
                     ('visual_slam/camera_info_0', 'camera/infra1/camera_info'),
                     ('visual_slam/image_1', 'camera/infra2/image_rect_raw'),
                     ('visual_slam/camera_info_1', 'camera/infra2/camera_info'),
-                    ('visual_slam/imu', 'camera/imu')]
+                    ('visual_slam/imu', 'camera/imu')],
         parameters=[{
             'use_sim_time': True,
             'enable_image_denoising': True,
