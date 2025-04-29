@@ -1,9 +1,9 @@
-# VIO-UAV
-Visual Inertial Odometry Integration for UAVs
+# VSLAm-UAV
+Visual SLAM Integration for UAVs
 
 ## IMU Calibration
 
-In order to best take advantage of VSLAM, we must incorporate IMU data into the VIO pipeline. We can use the built in IMU of the Intel D435i camera. This requires the calibration of the IMU and the estimation of its parameters. The calibration of the IMU is done by estimating the bias, scale factor, and misalignment of the accelerometer and gyroscope.
+In order to best take advantage of VSLAM, we must incorporate IMU data into the VSLAM pipeline. We can use the built in IMU of the Intel D435i camera. This requires the calibration of the IMU and the estimation of its parameters. The calibration of the IMU is done by estimating the bias, scale factor, and misalignment of the accelerometer and gyroscope.
 
 To calibrate the IMU, we can use the IMU Calibration tool that comes with [Librealsense](https://github.com/IntelRealSense/librealsense). First, we need to build the `realsense` docker image:
 
@@ -131,4 +131,4 @@ $ python3 src/allan_ros2/scripts/analysis.py --data deviation.csv
 
 This will output the IMU parameters and save them to the `imu.yaml` file. I would recommend saving this file or at least the IMU parameters for future reference.
 
-
+## SIMULATION INSTRUCTIONS???
