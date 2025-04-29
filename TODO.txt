@@ -35,3 +35,6 @@ NOTES: Re add GPS() to self.sensors list extensions/pegasus.simulator/pegasus/si
        The /home/sim/ros2_ws/install/mavros/share/mavros/launch/px4_config.yaml file parameter fake gps vision is set to true
        Look into /clock and setting use_sim_time to true????
        Use default run scripts for issac ros vslam --> make sure domain id is set to 1???
+
+
+Made changes to extensions/pegasus.simulator/pegasus/simulator/params.py --> add Iris VIO

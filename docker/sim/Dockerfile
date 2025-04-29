@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 # Install extra ROS2 packages
 RUN apt-get install -y \
     ros-dev-tools \
-    ros-humble-ros-topic-tools \
+    ros-humble-topic-tools \
     ros-humble-rviz2
 
 # Install MAVROS dependencies
@@ -64,7 +64,7 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
 # Clone VIO-UAV Repository
 WORKDIR /home/sim
 RUN git clone https://github.com/bandofpv/VIO-UAV.git
-WORKDIR /home/sim/VIO-UAV
+WORKDIR /home/sim/VIO-UAV/sim
 
 # Source ROS2 workspace in .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/sim/.bashrc && \

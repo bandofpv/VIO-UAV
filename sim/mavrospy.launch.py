@@ -33,22 +33,12 @@ def generate_launch_description():
         launch_arguments={'fcu_url': LaunchConfiguration('fcu_url')}.items()
     )
 
-    # Relay node (from visual_slam/tracking/vo_pose to /mavros/vision_pose/pose)
-    relay_node = Node(
-        package='topic_tools',
-        executable='relay',
-        name='relay_pose',
-        output='screen',
-        arguments=['visual_slam/tracking/vo_pose_covariance', '/mavros/vision_pose/pose_cov']
-    )
-
     # Launch mavrospy node
     mavrospy_node = Node(
         package='mavrospy',
         executable=mavrospy_executable,
         name='control_node',
         output='screen',
-        parameters=[{'vision': True}]
     )
 
     # Build the launch description
@@ -56,6 +46,5 @@ def generate_launch_description():
         fcu_url_arg,
         pattern_arg,
         mavros_node,
-        mavrospy_node,
-        relay_node
+        mavrospy_node
     ])

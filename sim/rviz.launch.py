@@ -34,8 +34,8 @@ def generate_launch_description():
             os.getenv('AMENT_PREFIX_PATH').split(':')[0],
             'share',
             'mavrospy',
-            'rviz',
-            'sim.rviz'
+            'sim',
+            'issac-sim.rviz'
         )],
         output='screen'
     )
