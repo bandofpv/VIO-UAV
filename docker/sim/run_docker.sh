@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="vio-sim"
+IMAGE_NAME="vslam-sim"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="vio-sim-container"
+CONTAINER_NAME="vslam-sim-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then

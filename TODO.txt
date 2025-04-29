@@ -38,3 +38,5 @@ NOTES: Re add GPS() to self.sensors list extensions/pegasus.simulator/pegasus/si
 
 
 Made changes to extensions/pegasus.simulator/pegasus/simulator/params.py --> add Iris VIO
+
+CUSOMIZE rvis config for isaac sim demo

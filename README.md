@@ -1,4 +1,4 @@
-# VSLAm-UAV
+# VSLAM-UAV
 Visual SLAM Integration for UAVs
 
 ## IMU Calibration
@@ -132,3 +132,13 @@ $ python3 src/allan_ros2/scripts/analysis.py --data deviation.csv
 This will output the IMU parameters and save them to the `imu.yaml` file. I would recommend saving this file or at least the IMU parameters for future reference.
 
 ## SIMULATION INSTRUCTIONS???
+
+ISAACSIM_PYTHON ssac_sim.py
+
+docker sim: ros2 launch mavrospy.launch.py
+
+to enter docker issac-ros without re-build: cd ${ISAAC_ROS_WS}/src/isaac_ros_common && ./scripts/run_dev.sh -b
+
+docker issac-ros: cd VSLAM-UAV/sim && bash issac_ros_vslam.sh
+attach docker issac-ros: rviz2 -d $(ros2 pkg prefix isaac_ros_visual_slam --share)/rviz/isaac_sim.cfg.rviz
+^^^ replace with own config after more testing
