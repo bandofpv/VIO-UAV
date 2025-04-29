@@ -1,0 +1,3 @@
+Test mocap and create launch file
+Test all mocap patterns
+Test an outdoor pattern
