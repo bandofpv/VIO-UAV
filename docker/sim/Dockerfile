@@ -61,10 +61,10 @@ RUN rosinstall_generator --format repos mavlink | tee /tmp/mavlink.repos && \
     sudo ./src/mavros/mavros/scripts/install_geographiclib_datasets.sh
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
 
-# Clone VIO-UAV Repository
+# Clone VSLAM-UAV Repository
 WORKDIR /home/sim
-RUN git clone https://github.com/bandofpv/VIO-UAV.git
-WORKDIR /home/sim/VIO-UAV/sim
+RUN git clone https://github.com/bandofpv/VSLAM-UAV.git
+WORKDIR /home/sim/VSLAM-UAV/sim
 
 # Source ROS2 workspace in .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/sim/.bashrc && \
