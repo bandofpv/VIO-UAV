@@ -1,0 +1,25 @@
+mkdir ~/isaacsim
+cd ~/Downloads
+wget https://download.isaacsim.omniverse.nvidia.com/isaac-sim-standalone%404.2.0-rc.18%2Brelease.16044.3b2ed111.gl.linux-x86_64.release.zip
+unzip "isaac-sim-standalone@4.2.0-rc.18+release.16044.3b2ed111.gl.linux-x86_64.release.zip" -d ~/isaacsim
+cd ~/isaacsim
+./omni.isaac.sim.post.install.sh
+./isaac-sim.selector.sh
+
+Use echo or some script to add this to .bashrc:
+# Isaac Sim root directory
+export ISAACSIM_PATH="${HOME}/isaacsim"
+# Isaac Sim python executable
+alias ISAACSIM_PYTHON="${ISAACSIM_PATH}/python.sh"
+# Isaac Sim app
+alias ISAACSIM="${ISAACSIM_PATH}/isaac-sim.sh"
+
+Follow all instructions for PSim Installing PX4-Autopilot, but use  pip install empy==3.3.4
+
+Ctrl+C after make px4_sitl_default none when you see: [100%] Built target px4
+
+Install QGroundControl
+
+Copy over Iris_Hawk into ~/PegasusSimulator/extensions/pegasus.simulator/pegasus/simulator/assets/Robots
+Modify /home/bandofpv/PegasusSimulator/extensions/pegasus.simulator/pegasus/simulator/params.py --> ROBOTS = {"Iris": ROBOTS_ASSETS + "/Iris/iris.usd"} --> ROBOTS = {"Iris": ROBOTS_ASSETS + "/Iris/iris.usd", "Iris Hawk": ROBOTS_ASSETS + "/Iris_Hawk/iris_hawk.usd"}
+
