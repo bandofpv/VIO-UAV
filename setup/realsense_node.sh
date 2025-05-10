@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# Exit if any command fails
+set -e
+
+# Launch RealSense node with IMU and infrared cameras
+echo "Launching RealSense camera with IMU and IR streams..."
 ros2 launch realsense2_camera rs_launch.py \
   enable_infra1:=true \
   enable_infra2:=true \
