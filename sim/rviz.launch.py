@@ -13,35 +13,16 @@ def generate_launch_description():
         description='Use simulation time if true'
     )
 
-    # Launch Pose to Path node
-    pose_to_path_node = Node(
-        package='mavrospy',
-        executable='pose_to_path_py',
-        name='pose_to_path',
-        output='screen',
-        parameters=[{
-            'use_sim_time': LaunchConfiguration('use_sim_time'),
-            'topic': '/mavros/local_position/pose'
-        }]
-    )
-
     # Launch RViz
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz',
-        arguments=['-d', os.path.join(
-            os.getenv('AMENT_PREFIX_PATH').split(':')[0],
-            'share',
-            'mavrospy',
-            'sim',
-            'issac-sim.rviz'
-        )],
+        arguments=['-d', '/workspaces/isaac_ros-dev/VSLAM-UAV/sim/isaac_sim.cfg.rviz'],
         output='screen'
     )
 
     return LaunchDescription([
         use_sim_time_arg,
-        pose_to_path_node,
         rviz_node
     ])
