@@ -5,6 +5,17 @@ IMAGE_NAME="analysis"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
 CONTAINER_NAME="analysis-container"
+REBUILD=false
+
+# Parse command line arguments
+for arg in "$@"; do
+    case $arg in
+        --rebuild)
+            REBUILD=true
+            shift
+            ;;
+    esac
+done
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then
@@ -62,6 +73,20 @@ else
   fi
 fi
 
+# If rebuild flag is set, rebuild the image
+if [ "$REBUILD" = true ]; then
+    echo "Rebuilding Docker image $IMAGE_NAME:$IMAGE_TAG."
+    docker build --no-cache --network=host -t "$IMAGE_NAME:$IMAGE_TAG" -f "$DOCKERFILE_PATH" .
+
+    # Check if the rebuild was successful
+    if image_exists; then
+        echo "Docker image $IMAGE_NAME:$IMAGE_TAG rebuilt successfully."
+    else
+        echo "Failed to rebuild Docker image $IMAGE_NAME:$IMAGE_TAG."
+        exit 1
+    fi
+fi
+
 # Run docker container
 echo "Running $IMAGE_NAME:$IMAGE_TAG."
-docker run -it --rm --net=host --name $CONTAINER_NAME --runtime=nvidia --gpus all -e NVIDIA_VISIBLE_DEVICES=all -e NVIDIA_DRIVER_CAPABILITIES=all -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $IMAGE_NAME:$IMAGE_TAG
+docker run -it --rm --net=host --name $CONTAINER_NAME -e DISPLAY=$DISPLAY -v ~/VSLAM-UAV/docker/analysis/imu_rosbag:/home/analysis/imu_rosbag -v ~/VSLAM-UAV/docker/analysis/cfg.yaml:/home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml -v /tmp/.X11-unix:/tmp/.X11-unix $IMAGE_NAME:$IMAGE_TAG

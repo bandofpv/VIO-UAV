@@ -35,6 +35,7 @@ RUN useradd -m analysis && echo "analysis:analysis" | chpasswd && adduser analys
 # Configure sudoers to not require a password for sudo
 RUN echo "analysis ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+
 # Switch to analysis user
 USER analysis
 
@@ -66,8 +67,8 @@ RUN sudo apt-get install -y ros-humble-rviz2
 # Work in home directory
 WORKDIR /home/analysis
 
-# Clone VIO-UAV repo
-RUN git clone https://github.com/bandofpv/VIO-UAV.git
+# Clone VSLAM-UAV repo
+RUN git clone https://github.com/bandofpv/VSLAM-UAV.git
 
 # Install Dependencies for allan_ros2 package
 RUN sudo apt-get update && sudo apt-get install -y \
@@ -83,7 +84,7 @@ RUN git clone https://github.com/PX4/px4_msgs.git && \
     git clone --recurse-submodules https://github.com/IMRCLab/motion_capture_tracking.git
 
 # Copy cfg.yaml file
-COPY ./cfg.yaml /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml
+# COPY ./cfg.yaml /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml
 
 #WORKDIR /home/analysis/ros2_ws/src/px4_msgs
 #RUN git reset --hard 87741f4
@@ -94,21 +95,21 @@ RUN sudo rosdep init && \
     /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
 
 # Copy IMU rosbag data
-#COPY ./imu_rosbag /home/analysis/imu_rosbag
+COPY ./imu_rosbag /home/analysis/imu_rosbag
 
 # Copy custom msg files
-RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces /home/analysis/VIO-UAV/analysis
+# RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces /home/analysis/VSLAM-UAV/analysis
 
 # Install pandas and rosbags
-RUN pip3 install pandas rosbags
+RUN pip3 install pandas rosbags numpy==1.21
 
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
     echo "source /home/analysis/ros2_ws/install/setup.bash" >> /home/analysis/.bashrc && \
     echo "export ROS_DOMAIN_ID=1" >> /home/analysis/.bashrc
 
-# Start in VIO-UAV directory
-WORKDIR /home/analysis/VIO-UAV
+# Start in VSLAM-UAV directory
+WORKDIR /home/analysis/VSLAM-UAV
 
 # Clean up
 RUN sudo rm -rf /var/lib/apt/lists/* && \
