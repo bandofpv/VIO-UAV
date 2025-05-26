@@ -1,0 +1,3 @@
+[submodule "mavrospy"]
+	path = mavrospy
+	url = https://github.com/bandofpv/mavrospy.git
