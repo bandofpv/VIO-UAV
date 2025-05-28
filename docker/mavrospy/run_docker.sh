@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-IMAGE_NAME="ros2-mocap"
+IMAGE_NAME="mavrospy-vslam"
 IMAGE_TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
-CONTAINER_NAME="ros2-mocap-container"
+CONTAINER_NAME="mavrospy-vslam-container"
 
 # Prevent running as root.
 if [[ $(id -u) -eq 0 ]]; then
@@ -64,4 +64,4 @@ fi
 
 # Run docker container
 echo "Running $IMAGE_NAME:$IMAGE_TAG."
-docker run -it --rm --net=host --name $CONTAINER_NAME -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix $IMAGE_NAME:$IMAGE_TAG
+docker run -it --rm --name $CONTAINER_NAME --device=/dev/ttyUSB0 --net=host --ipc=host $IMAGE_NAME:$IMAGE_TAG

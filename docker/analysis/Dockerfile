@@ -35,7 +35,6 @@ RUN useradd -m analysis && echo "analysis:analysis" | chpasswd && adduser analys
 # Configure sudoers to not require a password for sudo
 RUN echo "analysis ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-
 # Switch to analysis user
 USER analysis
 
@@ -76,32 +75,28 @@ RUN sudo apt-get update && sudo apt-get install -y \
     python3-rosdep \
     python3-colcon-common-extensions
 
+# Clean up
+RUN sudo rm -rf /var/lib/apt/lists/* && \
+    sudo apt-get clean
+
 # Install allan_ros2 and motion_capture_tracking packages
-#RUN mkdir -p /home/analysis/ros2_ws/src
 WORKDIR /home/analysis/ros2_ws/src
 RUN git clone https://github.com/PX4/px4_msgs.git && \
     git clone https://github.com/CruxDevStuff/allan_ros2.git && \
     git clone --recurse-submodules https://github.com/IMRCLab/motion_capture_tracking.git
 
-# Copy cfg.yaml file
-# COPY ./cfg.yaml /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking/config/cfg.yaml
+# Copy custom msg files
+RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces /home/analysis/VSLAM-UAV/analysis
 
-#WORKDIR /home/analysis/ros2_ws/src/px4_msgs
-#RUN git reset --hard 87741f4
+# Install pandas and rosbags
+RUN pip3 install pandas rosbags numpy==1.21
+
+# Build the ROS2 workspace
 WORKDIR /home/analysis/ros2_ws
 RUN sudo rosdep init && \
     rosdep update && \
     /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep install --from-paths src -y --ignore-src" && \
-    /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build"
-
-# Copy IMU rosbag data
-COPY ./imu_rosbag /home/analysis/imu_rosbag
-
-# Copy custom msg files
-# RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces /home/analysis/VSLAM-UAV/analysis
-
-# Install pandas and rosbags
-RUN pip3 install pandas rosbags numpy==1.21
+    /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
 
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
@@ -110,10 +105,6 @@ RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
 
 # Start in VSLAM-UAV directory
 WORKDIR /home/analysis/VSLAM-UAV
-
-# Clean up
-RUN sudo rm -rf /var/lib/apt/lists/* && \
-    sudo apt-get clean
 
 # Set up entrypoint
 ENTRYPOINT ["/bin/bash"]

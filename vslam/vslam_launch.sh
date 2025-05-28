@@ -18,4 +18,4 @@ export ROS_DOMAIN_ID=1
 
 # Launch the visual SLAM package with RealSense
 echo "Launching Isaac ROS Visual SLAM with RealSense..."
-ros2 launch isaac_ros_visual_slam isaac_ros_vslam_realsense.py
+ros2 launch isaac_ros_vslam_realsense.py

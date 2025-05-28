@@ -3,7 +3,7 @@
     type: "qualisys"
 
     # Specify the hostname or IP of the computer running the motion capture software
-    hostname: "192.168.8.243"
+    hostname: "10.24.5.189"
 
     # Specify additional settings for the /poses topic here
     topics:
