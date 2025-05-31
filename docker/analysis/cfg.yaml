@@ -1,5 +1,6 @@
 /motion_capture_tracking:
   ros__parameters:
+    # one of "optitrack", "optitrack_closed_source", "vicon", "qualisys", "nokov", "vrpn", "motionanalysis"
     type: "qualisys"
 
     # Specify the hostname or IP of the computer running the motion capture software
