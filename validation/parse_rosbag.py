@@ -48,7 +48,7 @@ with Reader('/home/analysis/VIO-UAV/analysis/data/' + str(args.name)) as reader:
             gt.append({
                 'gt_secs': msg.header.stamp.sec,
                 'gt_nsecs': msg.header.stamp.nanosec,
-                'gt_position_x': msg.poses[0].pose.position.x, 
+                'gt_position_x': msg.poses[0].pose.position.x,
                 'gt_position_y': msg.poses[0].pose.position.y,
                 'gt_position_z': msg.poses[0].pose.position.z,
                 'gt_orientation_x': msg.poses[0].pose.orientation.x,
@@ -57,19 +57,19 @@ with Reader('/home/analysis/VIO-UAV/analysis/data/' + str(args.name)) as reader:
                 'gt_orientation_w': msg.poses[0].pose.orientation.w
                 })
 
-        if connection.topic == '/visual_slam/tracking/vo_pose_covariance':
+        if connection.topic == '/visual_slam/tracking/vo_pose':
             msg = typestore.deserialize_cdr(rawdata, connection.msgtype)
 
             vio.append({
                 'vio_secs': msg.header.stamp.sec,
                 'vio_nsecs': msg.header.stamp.nanosec,
-                'vio_position_x': msg.pose.pose.position.x, 
-                'vio_position_y': msg.pose.pose.position.y,
-                'vio_position_z': msg.pose.pose.position.z,
-                'vio_orientation_x': msg.pose.pose.orientation.x,
-                'vio_orientation_y': msg.pose.pose.orientation.y,
-                'vio_orientation_z': msg.pose.pose.orientation.z,
-                'vio_orientation_w': msg.pose.pose.orientation.w
+                'vio_position_x': msg.pose.position.x,
+                'vio_position_y': msg.pose.position.y,
+                'vio_position_z': msg.pose.position.z,
+                'vio_orientation_x': msg.pose.orientation.x,
+                'vio_orientation_y': msg.pose.orientation.y,
+                'vio_orientation_z': msg.pose.orientation.z,
+                'vio_orientation_w': msg.pose.orientation.w
                 })
 
 gt_df = pd.DataFrame(gt)
