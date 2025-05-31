@@ -13,4 +13,4 @@ This repository provides a complete solution for integrating visual SLAM with th
 
 ## Usage and Setup
 
-[Tutorial](https://www.andrewbernas.com/docs/tutorials/robots/vslam)
+[Tutorial](https://www.bandofpv.github.io/docs/tutorials/robots/vslam)
