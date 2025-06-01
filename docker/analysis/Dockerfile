@@ -98,11 +98,10 @@ RUN sudo rosdep init && \
     /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
 
 # Copy custom msg files
-RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces/msg /home/analysis/VSLAM-UAV/validation
+RUN cp -r /home/analysis/ros2_ws/src/motion_capture_tracking/motion_capture_tracking_interfaces /home/analysis/VSLAM-UAV/validation
 
 # Install Python dependencies for validation
 RUN pip3 install pandas rosbags numpy==1.21
-RUN pip3 install jupyter
 
 # Add start up commands to .bashrc
 RUN echo "source /opt/ros/humble/setup.bash" >> /home/analysis/.bashrc && \
