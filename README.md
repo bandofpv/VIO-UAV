@@ -13,4 +13,4 @@ This repository provides a complete solution for integrating visual SLAM and VIO
 
 ## Usage and Setup
 
-[Tutorial](https://www.bandofpv.github.io/docs/tutorials/robots/vslam)
+[Tutorial](https://bandofpv.github.io/docs/tutorials/robots/vslam)
